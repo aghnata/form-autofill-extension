@@ -87,7 +87,7 @@
     if (/cvv|cvc/i.test(hint)) return '123';
     if (/expir/i.test(hint)) return '12/28';
     // Numeric-context patterns: fields whose name/label implies a number
-    if (/days?|count|amount|quantity|number|buffer|limit|max|min|size|length|duration|period|rate|price|cost|fee|total|balance|score|weight|height|width|year|month|age|percent|ratio|threshold|capacity|budget|salary|income|hour|minute|second|interval|timeout|retry|attempt|step|level|order|rank|priority|code|pin/i.test(hint)) return '1';
+    if (/days?|count|amount|quantity|number|buffer|limit|max|min|size|length|duration|period|rate|price|cost|fee|total|balance|score|weight|height|width|year|month|age|percent|ratio|threshold|capacity|budget|salary|income|hour|minute|second|interval|timeout|retry|attempt|step|level|order|rank|priority|code|pin|markup|margin|discount|tax|commission|surcharge|deductible|premium|deposit|credit|debit|installment|payment|wage|bonus/i.test(hint)) return '1';
     return 'Test Value';
   }
 
@@ -124,8 +124,28 @@
     // ng-reflect-type="number" (Angular debug attribute)
     if (element.getAttribute('ng-reflect-type') === 'number') return true;
 
+    // Common Angular numeric-input directives and custom attributes
+    // Many Angular apps use custom directives like appAllowOnlyNumbers,
+    // allowDecimal, onlyNumbers, numbersOnly, etc.
+    const attrs = Array.from(element.attributes).map(a => a.name.toLowerCase());
+    if (attrs.some(a =>
+      /only\s?number|number\s?only|allow\s?decimal|allow\s?negative|digits?\s?after\s?decimal|numeric|currency|mask.*number/i.test(a)
+    )) return true;
+
+    // Check for specific well-known Angular directive attributes
+    if (element.hasAttribute('appallowonlynumbers') ||
+        element.hasAttribute('allowdecimal') ||
+        element.hasAttribute('numberofdigitsafterdecimal') ||
+        element.hasAttribute('onlynumbers') ||
+        element.hasAttribute('numbersonly') ||
+        element.hasAttribute('currencymask') ||
+        element.hasAttribute('mask') ||
+        element.hasAttribute('appnumeric') ||
+        element.hasAttribute('appnumberinput') ||
+        element.hasAttribute('digitonly')) return true;
+
     // Contextual: hint contains number-implying words
-    if (/days?|count|amount|quantity|number|buffer|limit|size|length|duration|period|rate|price|cost|fee|total|balance|score|weight|height|width|percent|ratio|threshold|capacity|budget|salary|income|hours?|minutes?|seconds?|interval|timeout|retry|attempts?|step|level|order|rank|priority|pin/i.test(hint)) {
+    if (/days?|count|amount|quantity|number|buffer|limit|size|length|duration|period|rate|price|cost|fee|total|balance|score|weight|height|width|percent|ratio|threshold|capacity|budget|salary|income|hours?|minutes?|seconds?|interval|timeout|retry|attempts?|step|level|order|rank|priority|pin|markup|margin|discount|tax|commission|surcharge|deductible|premium|deposit|credit|debit|installment|payment|wage|bonus/i.test(hint)) {
       return true;
     }
 
